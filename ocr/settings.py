@@ -1,10 +1,14 @@
-import string
+import string, os
 
 # TODO These settings can be static or being parametrized depending of the height or width
 
+
 CHARACTERS = '0123456789' + string.ascii_lowercase + '-'
 DATA_PATH = 'test'
-MODEL_PATH = 'ocr_model.hdf5'
+
+module_dir = os.path.dirname(__file__)  # get current directory
+MODEL_PATH = os.path.join(module_dir, 'ocr_model.hdf5')
+
 WIDTH = 200
 HEIGHT = 31
 LABEL_LEN = 16
