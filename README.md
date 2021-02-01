@@ -2,7 +2,12 @@
 
 ## Prerequirements
 
-1. Conda
+1. Docker
+2. Conda (For local virtual environment only)
+
+## Build the container
+
+`docker build .`
 
 ## Local environment setup
 
@@ -14,14 +19,21 @@
 
 `pip install -r requirements.txt`
 
-## Run Flask
+Optional step: `python manage.py migrate`
 
-`export FLASK_APP=flaskr`
+## Run the project
 
-`export FLASK_ENV=development`
+`python manage.py runserver 0.0.0.0:8000`
 
-`flask run`
+## Testing
 
-## Limitations
+1. Open `127.0.0.1:8000/graphql`
+2. Perform a query
 
-It is supported to evaluate one image from url at a time.
+### Sugested query
+``
+{
+  ocr(url: "")
+}
+``
+
