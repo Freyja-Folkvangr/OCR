@@ -8,7 +8,7 @@ import keras.backend as K
 from settings import *
 
 from utils import pad_image, resize_image, create_result_subdir
-from models import CRNN_STN
+from tf_models import CRNN_STN
 
 
 def set_gpus():
