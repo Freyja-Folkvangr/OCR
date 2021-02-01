@@ -5,10 +5,10 @@ from tqdm import tqdm
 import numpy as np
 import cv2
 import keras.backend as K
-from settings import *
+from .settings import *
 
-from utils import pad_image, resize_image, create_result_subdir
-from tf_models import CRNN_STN
+from .utils import pad_image, resize_image, create_result_subdir
+from .tf_models import CRNN_STN
 
 
 def set_gpus():
@@ -74,6 +74,7 @@ def evaluate(url: str):
     img = preprocess_image(img)
     result = predict_text(model, img)
     print('Detected result: {}'.format(result))
+    return result
 
 
 def evaluate_batch(model, data, output_subdir):
