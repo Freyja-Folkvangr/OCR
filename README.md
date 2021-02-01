@@ -13,9 +13,9 @@
 
 1. Create a Conda environment
 
-`conda create -n deeplegal-ocr python=3.6`
+`conda create -n deep-ocr python=3.6`
 
-`conda activate deeplegal-ocr`
+`conda activate deep-ocr`
 
 `pip install -r requirements.txt`
 
@@ -33,7 +33,7 @@ Optional step: `python manage.py migrate`
 ### Sugested query
 ``
 {
-  ocr(url: "")
+  ocr(url: "https://www.plot.cl/wp-content/uploads/2016/07/PARE.jpg")
 }
 ``
 
