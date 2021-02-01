@@ -4,6 +4,7 @@ from keras.models import Model
 import keras.backend as K
 
 from STN.spatial_transformer import SpatialTransformer
+from settings import *
 
 
 
@@ -35,22 +36,22 @@ def ctc_lambda_func(args):
     return K.ctc_batch_cost(ilabels, iy_pred, iinput_length, ilabel_length)
 
 
-def CRNN_STN(cfg):
+def CRNN_STN():
 
-    inputs = Input((cfg.width, cfg.height, cfg.nb_channels))
-    c_1 = Conv2D(cfg.conv_filter_size[0], (3, 3), activation='relu', padding='same', name='conv_1')(inputs)
-    c_2 = Conv2D(cfg.conv_filter_size[1], (3, 3), activation='relu', padding='same', name='conv_2')(c_1)
-    c_3 = Conv2D(cfg.conv_filter_size[2], (3, 3), activation='relu', padding='same', name='conv_3')(c_2)
+    inputs = Input((WIDTH, HEIGHT, NB_CHANNELS))
+    c_1 = Conv2D(CONV_FILTER_SIZE[0], (3, 3), activation='relu', padding='same', name='conv_1')(inputs)
+    c_2 = Conv2D(CONV_FILTER_SIZE[1], (3, 3), activation='relu', padding='same', name='conv_2')(c_1)
+    c_3 = Conv2D(CONV_FILTER_SIZE[2], (3, 3), activation='relu', padding='same', name='conv_3')(c_2)
     bn_3 = BatchNormalization(name='bn_3')(c_3)
     p_3 = MaxPooling2D(pool_size=(2, 2), name='maxpool_3')(bn_3)
 
-    c_4 = Conv2D(cfg.conv_filter_size[3], (3, 3), activation='relu', padding='same', name='conv_4')(p_3)
-    c_5 = Conv2D(cfg.conv_filter_size[4], (3, 3), activation='relu', padding='same', name='conv_5')(c_4)
+    c_4 = Conv2D(CONV_FILTER_SIZE[3], (3, 3), activation='relu', padding='same', name='conv_4')(p_3)
+    c_5 = Conv2D(CONV_FILTER_SIZE[4], (3, 3), activation='relu', padding='same', name='conv_5')(c_4)
     bn_5 = BatchNormalization(name='bn_5')(c_5)
     p_5 = MaxPooling2D(pool_size=(2, 2), name='maxpool_5')(bn_5)
 
-    c_6 = Conv2D(cfg.conv_filter_size[5], (3, 3), activation='relu', padding='same', name='conv_6')(p_5)
-    c_7 = Conv2D(cfg.conv_filter_size[6], (3, 3), activation='relu', padding='same', name='conv_7')(c_6)
+    c_6 = Conv2D(CONV_FILTER_SIZE[5], (3, 3), activation='relu', padding='same', name='conv_6')(p_5)
+    c_7 = Conv2D(CONV_FILTER_SIZE[6], (3, 3), activation='relu', padding='same', name='conv_7')(c_6)
     bn_7 = BatchNormalization(name='bn_7')(c_7)
 
     bn_7_shape = bn_7.get_shape()
@@ -59,22 +60,22 @@ def CRNN_STN(cfg):
 
     reshape = Reshape(target_shape=(int(bn_7_shape[1]), int(bn_7_shape[2] * bn_7_shape[3])), name='reshape')(stn)
 
-    fc_9 = Dense(cfg.lstm_nb_units[0], activation='relu', name='fc_9')(reshape)
+    fc_9 = Dense(LSTM_NB_UNITS[0], activation='relu', name='fc_9')(reshape)
 
-    lstm_10 = LSTM(cfg.lstm_nb_units[0], kernel_initializer="he_normal", return_sequences=True, name='lstm_10')(fc_9)
-    lstm_10_back = LSTM(cfg.lstm_nb_units[0], kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_10_back')(fc_9)
+    lstm_10 = LSTM(LSTM_NB_UNITS[0], kernel_initializer="he_normal", return_sequences=True, name='lstm_10')(fc_9)
+    lstm_10_back = LSTM(LSTM_NB_UNITS[0], kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_10_back')(fc_9)
     lstm_10_add = add([lstm_10, lstm_10_back])
 
-    lstm_11 = LSTM(cfg.lstm_nb_units[1], kernel_initializer="he_normal", return_sequences=True, name='lstm_11')(lstm_10_add)
-    lstm_11_back = LSTM(cfg.lstm_nb_units[1], kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_11_back')(lstm_10_add)
+    lstm_11 = LSTM(LSTM_NB_UNITS[1], kernel_initializer="he_normal", return_sequences=True, name='lstm_11')(lstm_10_add)
+    lstm_11_back = LSTM(LSTM_NB_UNITS[1], kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_11_back')(lstm_10_add)
     lstm_11_concat = concatenate([lstm_11, lstm_11_back])
-    do_11 = Dropout(cfg.dropout_rate, name='dropout')(lstm_11_concat)
+    do_11 = Dropout(DROPOUT_RATE, name='dropout')(lstm_11_concat)
 
-    fc_12 = Dense(len(cfg.characters), kernel_initializer='he_normal', activation='softmax', name='fc_12')(do_11)
+    fc_12 = Dense(len(CHARACTERS), kernel_initializer='he_normal', activation='softmax', name='fc_12')(do_11)
 
     prediction_model = Model(inputs=inputs, outputs=fc_12)
 
-    labels = Input(name='labels', shape=[cfg.label_len], dtype='float32')
+    labels = Input(name='labels', shape=[LABEL_LEN], dtype='float32')
     input_length = Input(name='input_length', shape=[1], dtype='int64')
     label_length = Input(name='label_length', shape=[1], dtype='int64')
 
@@ -85,42 +86,42 @@ def CRNN_STN(cfg):
     return training_model, prediction_model
 
 
-def CRNN(cfg):
+def CRNN():
 
-    inputs = Input((cfg.width, cfg.height, cfg.nb_channels))
-    c_1 = Conv2D(cfg.conv_filter_size[0], (3, 3), activation='relu', padding='same', name='conv_1')(inputs)
-    c_2 = Conv2D(cfg.conv_filter_size[1], (3, 3), activation='relu', padding='same', name='conv_2')(c_1)
-    c_3 = Conv2D(cfg.conv_filter_size[2], (3, 3), activation='relu', padding='same', name='conv_3')(c_2)
+    inputs = Input((WIDTH, HEIGHT, NB_CHANNELS))
+    c_1 = Conv2D(CONV_FILTER_SIZE[0], (3, 3), activation='relu', padding='same', name='conv_1')(inputs)
+    c_2 = Conv2D(CONV_FILTER_SIZE[1], (3, 3), activation='relu', padding='same', name='conv_2')(c_1)
+    c_3 = Conv2D(CONV_FILTER_SIZE[2], (3, 3), activation='relu', padding='same', name='conv_3')(c_2)
     bn_3 = BatchNormalization(name='bn_3')(c_3)
     p_3 = MaxPooling2D(pool_size=(2, 2), name='maxpool_3')(bn_3)
 
-    c_4 = Conv2D(cfg.conv_filter_size[3], (3, 3), activation='relu', padding='same', name='conv_4')(p_3)
-    c_5 = Conv2D(cfg.conv_filter_size[4], (3, 3), activation='relu', padding='same', name='conv_5')(c_4)
+    c_4 = Conv2D(CONV_FILTER_SIZE[3], (3, 3), activation='relu', padding='same', name='conv_4')(p_3)
+    c_5 = Conv2D(CONV_FILTER_SIZE[4], (3, 3), activation='relu', padding='same', name='conv_5')(c_4)
     bn_5 = BatchNormalization(name='bn_5')(c_5)
     p_5 = MaxPooling2D(pool_size=(2, 2), name='maxpool_5')(bn_5)
 
-    c_6 = Conv2D(cfg.conv_filter_size[5], (3, 3), activation='relu', padding='same', name='conv_6')(p_5)
-    c_7 = Conv2D(cfg.conv_filter_size[6], (3, 3), activation='relu', padding='same', name='conv_7')(c_6)
+    c_6 = Conv2D(CONV_FILTER_SIZE[5], (3, 3), activation='relu', padding='same', name='conv_6')(p_5)
+    c_7 = Conv2D(CONV_FILTER_SIZE[6], (3, 3), activation='relu', padding='same', name='conv_7')(c_6)
     bn_7 = BatchNormalization(name='bn_7')(c_7)
 
     reshape = Reshape(target_shape=(int(bn_7_shape[1]), int(bn_7_shape[2] * bn_7_shape[3])), name='reshape')(bn_7)
 
-    fc_9 = Dense(cfg.lstm_nb_units, activation='relu', name='fc_9')(reshape)
+    fc_9 = Dense(LSTM_NB_UNITS, activation='relu', name='fc_9')(reshape)
 
-    lstm_10 = LSTM(cfg.lstm_nb_units, kernel_initializer="he_normal", return_sequences=True, name='lstm_10')(fc_9)
-    lstm_10_back = LSTM(cfg.lstm_nb_units, kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_10_back')(fc_9)
+    lstm_10 = LSTM(LSTM_NB_UNITS, kernel_initializer="he_normal", return_sequences=True, name='lstm_10')(fc_9)
+    lstm_10_back = LSTM(LSTM_NB_UNITS, kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_10_back')(fc_9)
     lstm_10_add = add([lstm_10, lstm_10_back])
 
-    lstm_11 = LSTM(cfg.lstm_nb_units, kernel_initializer="he_normal", return_sequences=True, name='lstm_11')(lstm_10_add)
-    lstm_11_back = LSTM(cfg.lstm_nb_units, kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_11_back')(lstm_10_add)
+    lstm_11 = LSTM(LSTM_NB_UNITS, kernel_initializer="he_normal", return_sequences=True, name='lstm_11')(lstm_10_add)
+    lstm_11_back = LSTM(LSTM_NB_UNITS, kernel_initializer="he_normal", go_backwards=True, return_sequences=True, name='lstm_11_back')(lstm_10_add)
     lstm_11_concat = concatenate([lstm_11, lstm_11_back])
-    do_11 = Dropout(cfg.dropout_rate, name='dropout')(lstm_11_concat)
+    do_11 = Dropout(DROPOUT_RATE, name='dropout')(lstm_11_concat)
 
-    fc_12 = Dense(len(cfg.characters), kernel_initializer='he_normal', activation='softmax', name='fc_12')(do_11)
+    fc_12 = Dense(len(CHARACTERS), kernel_initializer='he_normal', activation='softmax', name='fc_12')(do_11)
 
     prediction_model = Model(inputs=inputs, outputs=fc_12)
 
-    labels = Input(name='labels', shape=[cfg.label_len], dtype='float32')
+    labels = Input(name='labels', shape=[LABEL_LEN], dtype='float32')
     input_length = Input(name='input_length', shape=[1], dtype='int64')
     label_length = Input(name='label_length', shape=[1], dtype='int64')
 
