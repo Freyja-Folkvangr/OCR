@@ -1,7 +1,8 @@
-django
-graphene-django
+django~=3.1.5
 tensorflow==1.5.0
 keras==2.1.5
-opencv-python
-tqdm
-h5py<3.0.0
+opencv-python~=4.5.1.48
+tqdm~=4.56.0
+
+numpy~=1.19.2
+graphene~=2.1.8
