@@ -35,6 +35,7 @@ def load_image_from_url(url):
     # it into OpenCV format
 
     # TODO resize the image according to https://blog.roboflow.com/you-might-be-resizing-your-images-incorrectly/
+    # Ref. https://journalofbigdata.springeropen.com/articles/10.1186/s40537-019-0263-7
 
     resp = urllib.request.urlopen(url)
     image = np.asarray(bytearray(resp.read()), dtype="uint8")
