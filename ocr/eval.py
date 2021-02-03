@@ -1,5 +1,4 @@
-import os
-import urllib
+from urllib.request import Request, urlopen
 
 from tqdm import tqdm
 import numpy as np
@@ -37,7 +36,8 @@ def load_image_from_url(url):
     # TODO resize the image according to https://blog.roboflow.com/you-might-be-resizing-your-images-incorrectly/
     # Ref. https://journalofbigdata.springeropen.com/articles/10.1186/s40537-019-0263-7
 
-    resp = urllib.request.urlopen(url, timeout=30)
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    resp = urlopen(req)
     image = np.asarray(bytearray(resp.read()), dtype="uint8")
     image = cv2.imdecode(image, cv2.IMREAD_GRAYSCALE)
 
