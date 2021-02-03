@@ -53,20 +53,20 @@ def load_image_from_url(url):
     return image
 
 
-def preprocess_image(img):
-    if img.shape[1] / img.shape[0] < 6.4:
-        img = pad_image(img, (WIDTH, HEIGHT), NB_CHANNELS)
+def preprocess_image(image):
+    if image.shape[1] / image.shape[0] < 6.4:
+        image = pad_image(image, (WIDTH, HEIGHT), NB_CHANNELS)
     else:
-        img = resize_image(img, (WIDTH, HEIGHT))
+        image = resize_image(image, (WIDTH, HEIGHT))
     if NB_CHANNELS == 1:
-        img = img.transpose([1, 0])
+        image = image.transpose([1, 0])
     else:
-        img = img.transpose([1, 0, 2])
-    img = np.flip(img, 1)
-    img = img / 255.0
+        image = image.transpose([1, 0, 2])
+    image = np.flip(image, 1)
+    image = image / 255.0
     if NB_CHANNELS == 1:
-        img = img[:, :, np.newaxis]
-    return img
+        image = image[:, :, np.newaxis]
+    return image
 
 
 def predict_text(model, img):
