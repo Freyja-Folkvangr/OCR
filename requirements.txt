@@ -6,3 +6,4 @@ tqdm~=4.56.0
 h5py<3.0.0
 numpy~=1.19.2
 graphene~=2.1.8
+graphene-django
