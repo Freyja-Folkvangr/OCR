@@ -47,3 +47,8 @@ Optional step: `python manage.py migrate`
 }
 ``
 
+# Demo
+
+Demo available at
+
+`https://deep-ocr.herokuapp.com`
