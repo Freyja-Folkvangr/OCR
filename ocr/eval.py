@@ -48,8 +48,11 @@ def load_image_from_url(url):
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     resp = urlopen(req)
     image = np.asarray(bytearray(resp.read()), dtype="uint8")
+
     image = cv2.imdecode(image, cv2.IMREAD_GRAYSCALE)
 
+    # scale the image
+    # image = scale_image(image)
     return image
 
 
@@ -99,5 +102,3 @@ def evaluate_batch(model, data, output_subdir):
         output_file = output_file[:-4] + '.txt'
         with open(os.path.join(output_subdir, output_file), 'w') as f:
             f.write(result)
-
-
