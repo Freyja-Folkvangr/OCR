@@ -21,12 +21,21 @@ def create_output_directory():
     return output_subdir
 
 
-
 def load_image(img_path):
     if NB_CHANNELS == 1:
         return cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
     else:
         return cv2.imread(img_path)
+
+
+def scale_image(image: cv2.imdecode, scale_percent=45):
+    width = int(image.shape[1] * scale_percent / 100)
+    height = int(image.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+    print('Original Dimensions : ', image.shape)
+    print('Resized Dimensions : ', resized.shape)
+    return resized
 
 
 def load_image_from_url(url):
