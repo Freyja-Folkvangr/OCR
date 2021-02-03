@@ -1,8 +1,6 @@
 import graphene, re
 from graphene import String
 
-from ocr.eval import evaluate
-
 
 def is_url(url):
     # i hate regex
@@ -18,7 +16,8 @@ class Query(graphene.ObjectType):
     ocr = graphene.String(url=String(default_value=None))
 
     def resolve_ocr(self, root, url):
-        print('the url is %s' % url)
+        from ocr.eval import evaluate
+
         if url and is_url(url):
             return evaluate(url)
         else:
